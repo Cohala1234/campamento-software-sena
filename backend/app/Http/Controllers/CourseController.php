@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Course;
-class CourseController extends Controller
+use App\Http\Controllers\BaseController;
+use App\Http\Resources\CourseCollection;
+use App\Http\Resources\CourseResource;
+class CourseController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +16,14 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
+        try 
+        {
+            return $this->sendResponse(new CourseCollection(Course::all()));
+        } 
+        catch (\Exception $e) 
+        {
+            return $this->sendError('Server Error', 500);
+        }
     }
 
     /**
@@ -44,7 +54,20 @@ class CourseController extends Controller
      */
     public function show($id)
     {
-        //
+        try 
+        {
+            $curso=Course::find($id);
+            if(!$curso)
+            {
+                return  $this->sendError( "CURSO NO ENCONTRADO, EL ID $id no se encuentra", 400);
+            }
+            return $this->sendResponse(new CourseResource($curso));
+        }
+        catch (\Exception $e)
+        {
+            return  $this->sendError("Serve Error", 500);
+        }
+        
     }
 
     /**
@@ -67,6 +90,19 @@ class CourseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try
+        {
+            $c=Course::find($id);
+            if(!$c)
+            {
+                return $this->sendError("course widt id: $id not found", 400);
+            }
+            $b->delete();
+            return $this->sendResponse(new CourseResource($c));
+        }
+        catch (\Exception $e) 
+        {
+            return $this->sendError('Server error', 500);
+        }
     }
 }

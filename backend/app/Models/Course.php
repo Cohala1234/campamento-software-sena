@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
+    protected $fillable = ['title' , 'weeks', 'minimum_skill'];
     use HasFactory;
 }
